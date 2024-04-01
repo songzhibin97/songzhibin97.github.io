@@ -1,0 +1,29 @@
+name: github pages
+
+on:
+  push:
+    branches:
+      - main  # Set a branch to deploy
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare static site
+        run: |
+          rm -rf public
+          mkdir -p public
+          cp index.html styles.css profile-data.js profile-source.js shell-commands.js tweaks-panel.jsx boot-sequence.jsx interactive-shell.jsx terminal-stream.jsx app.jsx public/
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
