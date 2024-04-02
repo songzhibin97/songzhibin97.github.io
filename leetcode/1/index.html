@@ -13,16 +13,16 @@
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span> <span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>twoSum</span>(nums []<span style=color:#458;font-weight:700>int</span>, target <span style=color:#458;font-weight:700>int</span>) []<span style=color:#458;font-weight:700>int</span> {
-</span></span><span style=display:flex><span>     <span style=color:#000;font-weight:700>for</span> i <span style=color:#000;font-weight:700>:=</span> <span style=color:#099>0</span>; i &lt; <span style=color:#0086b3>len</span>(nums); i<span style=color:#000;font-weight:700>++</span> {
-</span></span><span style=display:flex><span>         <span style=color:#000;font-weight:700>for</span> j <span style=color:#000;font-weight:700>:=</span> i<span style=color:#000;font-weight:700>+</span><span style=color:#099>1</span>; j &lt; <span style=color:#0086b3>len</span>(nums); j<span style=color:#000;font-weight:700>++</span> {
-</span></span><span style=display:flex><span>             <span style=color:#000;font-weight:700>if</span> nums[i] <span style=color:#000;font-weight:700>+</span> nums[j] <span style=color:#000;font-weight:700>==</span> target {
-</span></span><span style=display:flex><span>                 <span style=color:#000;font-weight:700>return</span> []<span style=color:#458;font-weight:700>int</span>{i,j}
-</span></span><span style=display:flex><span>             }
-</span></span><span style=display:flex><span>         }
-</span></span><span style=display:flex><span>     }
-</span></span><span style=display:flex><span>     <span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
-</span></span><span style=display:flex><span> }
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>twoSum</span>(nums []<span style=color:#458;font-weight:700>int</span>, target <span style=color:#458;font-weight:700>int</span>) []<span style=color:#458;font-weight:700>int</span> {
+</span></span><span style=display:flex><span>   <span style=color:#000;font-weight:700>for</span> i <span style=color:#000;font-weight:700>:=</span> <span style=color:#099>0</span>; i &lt; <span style=color:#0086b3>len</span>(nums); i<span style=color:#000;font-weight:700>++</span> {
+</span></span><span style=display:flex><span>       <span style=color:#000;font-weight:700>for</span> j <span style=color:#000;font-weight:700>:=</span> i<span style=color:#000;font-weight:700>+</span><span style=color:#099>1</span>; j &lt; <span style=color:#0086b3>len</span>(nums); j<span style=color:#000;font-weight:700>++</span> {
+</span></span><span style=display:flex><span>           <span style=color:#000;font-weight:700>if</span> nums[i] <span style=color:#000;font-weight:700>+</span> nums[j] <span style=color:#000;font-weight:700>==</span> target {
+</span></span><span style=display:flex><span>               <span style=color:#000;font-weight:700>return</span> []<span style=color:#458;font-weight:700>int</span>{i,j}
+</span></span><span style=display:flex><span>           }
+</span></span><span style=display:flex><span>       }
+</span></span><span style=display:flex><span>   }
+</span></span><span style=display:flex><span>   <span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></td></tr></table></div></div><h3 id=哈希表>哈希表</h3><p>使用哈希表存储遍历过的元素,如果找到目标值-当前值的元素,则返回</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
@@ -34,14 +34,14 @@
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>twoSum</span>(nums []<span style=color:#458;font-weight:700>int</span>, target <span style=color:#458;font-weight:700>int</span>) []<span style=color:#458;font-weight:700>int</span> {
-</span></span><span style=display:flex><span>    m <span style=color:#000;font-weight:700>:=</span> <span style=color:#0086b3>make</span>(<span style=color:#000;font-weight:700>map</span>[<span style=color:#458;font-weight:700>int</span>]<span style=color:#458;font-weight:700>int</span>)
-</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>for</span> i <span style=color:#000;font-weight:700>:=</span> <span style=color:#099>0</span>; i &lt; <span style=color:#0086b3>len</span>(nums); i<span style=color:#000;font-weight:700>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#000;font-weight:700>if</span> v,ok <span style=color:#000;font-weight:700>:=</span> m[target<span style=color:#000;font-weight:700>-</span>nums[i]]; ok {
-</span></span><span style=display:flex><span>            <span style=color:#000;font-weight:700>return</span> []<span style=color:#458;font-weight:700>int</span>{v,i}
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        m[nums[i]] = i
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>   m <span style=color:#000;font-weight:700>:=</span> <span style=color:#0086b3>make</span>(<span style=color:#000;font-weight:700>map</span>[<span style=color:#458;font-weight:700>int</span>]<span style=color:#458;font-weight:700>int</span>)
+</span></span><span style=display:flex><span>   <span style=color:#000;font-weight:700>for</span> i <span style=color:#000;font-weight:700>:=</span> <span style=color:#099>0</span>; i &lt; <span style=color:#0086b3>len</span>(nums); i<span style=color:#000;font-weight:700>++</span> {
+</span></span><span style=display:flex><span>       <span style=color:#000;font-weight:700>if</span> v,ok <span style=color:#000;font-weight:700>:=</span> m[target<span style=color:#000;font-weight:700>-</span>nums[i]]; ok {
+</span></span><span style=display:flex><span>           <span style=color:#000;font-weight:700>return</span> []<span style=color:#458;font-weight:700>int</span>{v,i}
+</span></span><span style=display:flex><span>       }
+</span></span><span style=display:flex><span>       m[nums[i]] = i
+</span></span><span style=display:flex><span>   }
+</span></span><span style=display:flex><span>   <span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></td></tr></table></div></div><h3 id=双指针>双指针</h3><p>先对数组进行排序,然后使用双指针进行查找</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
@@ -58,26 +58,28 @@
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>twoSum</span>(nums []<span style=color:#458;font-weight:700>int</span>, target <span style=color:#458;font-weight:700>int</span>) []<span style=color:#458;font-weight:700>int</span> {
-</span></span><span style=display:flex><span>    sort.<span style=color:#900;font-weight:700>Ints</span>(nums)
-</span></span><span style=display:flex><span>    i, j <span style=color:#000;font-weight:700>:=</span> <span style=color:#099>0</span>, <span style=color:#0086b3>len</span>(nums)<span style=color:#000;font-weight:700>-</span><span style=color:#099>1</span>
-</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>for</span> i &lt; j {
-</span></span><span style=display:flex><span>        <span style=color:#000;font-weight:700>if</span> nums[i] <span style=color:#000;font-weight:700>+</span> nums[j] <span style=color:#000;font-weight:700>==</span> target {
-</span></span><span style=display:flex><span>            <span style=color:#000;font-weight:700>return</span> []<span style=color:#458;font-weight:700>int</span>{i,j}
-</span></span><span style=display:flex><span>        } <span style=color:#000;font-weight:700>else</span> <span style=color:#000;font-weight:700>if</span> nums[i] <span style=color:#000;font-weight:700>+</span> nums[j] &lt; target {
-</span></span><span style=display:flex><span>            i<span style=color:#000;font-weight:700>++</span>
-</span></span><span style=display:flex><span>        } <span style=color:#000;font-weight:700>else</span> {
-</span></span><span style=display:flex><span>            j<span style=color:#000;font-weight:700>--</span>
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>   sort.<span style=color:#900;font-weight:700>Ints</span>(nums)
+</span></span><span style=display:flex><span>   i, j <span style=color:#000;font-weight:700>:=</span> <span style=color:#099>0</span>, <span style=color:#0086b3>len</span>(nums)<span style=color:#000;font-weight:700>-</span><span style=color:#099>1</span>
+</span></span><span style=display:flex><span>   <span style=color:#000;font-weight:700>for</span> i &lt; j {
+</span></span><span style=display:flex><span>       <span style=color:#000;font-weight:700>if</span> nums[i] <span style=color:#000;font-weight:700>+</span> nums[j] <span style=color:#000;font-weight:700>==</span> target {
+</span></span><span style=display:flex><span>           <span style=color:#000;font-weight:700>return</span> []<span style=color:#458;font-weight:700>int</span>{i,j}
+</span></span><span style=display:flex><span>       } <span style=color:#000;font-weight:700>else</span> <span style=color:#000;font-weight:700>if</span> nums[i] <span style=color:#000;font-weight:700>+</span> nums[j] &lt; target {
+</span></span><span style=display:flex><span>           i<span style=color:#000;font-weight:700>++</span>
+</span></span><span style=display:flex><span>       } <span style=color:#000;font-weight:700>else</span> {
+</span></span><span style=display:flex><span>           j<span style=color:#000;font-weight:700>--</span>
+</span></span><span style=display:flex><span>       }
+</span></span><span style=display:flex><span>   }
+</span></span><span style=display:flex><span>   <span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></td></tr></table></div></div></div><div class=post-archive><h2>See Also</h2><ul class=listing><li><a href=/leetcode/2810/>2810. 故障键盘</a></li><li><a href=/about/>关于我</a></li></ul></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/top100 target=_blank>top100</a></li><li><a href=/tags/easy target=_blank>easy</a></li><li><a href=/tags/%E6%95%B0%E7%BB%84 target=_blank>数组</a></li><li><a href=/tags/%E5%93%88%E5%B8%8C%E8%A1%A8 target=_blank>哈希表</a></li></ul></div></article></div><footer id=footer><div>&copy; 2024 <a href=https://songzhibin97.github.io/>songzhibin97的随想 By songzhibin97</a></div><br><div><div class=github-badge><a href=https://gohugo.io/ target=_black rel=nofollow><span class=badge-subject>Powered by</span><span class="badge-value bg-blue">Hugo</span></a></div><div class=github-badge><a href=https://www.flysnow.org/ target=_black><span class=badge-subject>Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a></div><div class=github-badge><a href=https://github.com/flysnow-org/maupassant-hugo target=_black><span class=badge-subject>Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a></div></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><a id=rocket href=#top></a><script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><script src=/js/douban.js></script></div><div id=secondary><section class=widget><form id=search action=https://songzhibin97.github.io/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
 <input type=hidden name=sitesearch value=https://songzhibin97.github.io/>
-<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>Latest articles</h3><ul class=widget-list></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>Categories</a></h3><ul class=widget-list><li><a href=https://songzhibin97.github.io/categories/leetcode/>Leetcode (2)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>Tags</a></h3><div class=tagcloud><a href=https://songzhibin97.github.io/tags/easy/>Easy</a>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>Latest articles</h3><ul class=widget-list></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>Categories</a></h3><ul class=widget-list><li><a href=https://songzhibin97.github.io/categories/leetcode/>Leetcode (4)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>Tags</a></h3><div class=tagcloud><a href=https://songzhibin97.github.io/tags/easy/>Easy</a>
+<a href=https://songzhibin97.github.io/tags/middle/>Middle</a>
 <a href=https://songzhibin97.github.io/tags/top100/>Top100</a>
 <a href=https://songzhibin97.github.io/tags/%E5%8F%8D%E8%BD%AC/>反转</a>
 <a href=https://songzhibin97.github.io/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/>哈希表</a>
 <a href=https://songzhibin97.github.io/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/>字符串</a>
+<a href=https://songzhibin97.github.io/tags/%E5%B9%B6%E6%9F%A5%E9%9B%86/>并查集</a>
 <a href=https://songzhibin97.github.io/tags/%E6%95%B0%E7%BB%84/>数组</a>
 <a href=https://songzhibin97.github.io/tags/%E6%A8%A1%E6%8B%9F/>模拟</a>
 <a href=https://songzhibin97.github.io/tags/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/>每日一题</a></div></section><section class=widget><h3 class=widget-title>Meta</h3><ul class=widget-list><li><a href=https://songzhibin97.github.io/index.xml>RSS</a></li></ul></section></div></div></div></div></body></html>
