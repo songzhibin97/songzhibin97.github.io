@@ -84,6 +84,10 @@ function startOfWeek(date) {
   return d;
 }
 
+const INITIAL_PROFILE_BOOT = [
+  { ok: true, s: "Mounted", m: "static profile defaults" },
+];
+
 // ─── Defaults persisted via tweaks ───────────────────────────────────────
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "mode": "auto",
@@ -553,20 +557,47 @@ function Tweaks({ t, setTweak }) {
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [, setDataVersion] = useState(0);
+  const [profileLoad, setProfileLoad] = useState(() => ({
+    ready: typeof window.loadProfileData !== "function",
+    lines: INITIAL_PROFILE_BOOT,
+  }));
   const A = ACCENTS[t.accent] || ACCENTS.amber;
 
   useEffect(() => {
     if (typeof window.loadProfileData !== "function") return;
     let alive = true;
-    window.loadProfileData({ mode: window.PROFILE_DATA_SOURCE || "github" })
+
+    const pushProfileStatus = (line) => {
+      if (!alive || !line) return;
+      const next = {
+        ok: line.ok !== false,
+        s: line.s || "Loaded",
+        m: line.m || line.message || "",
+      };
+      setProfileLoad(prev => {
+        const exists = prev.lines.some(l => l.ok === next.ok && l.s === next.s && l.m === next.m);
+        if (exists) return prev;
+        return { ...prev, lines: [...prev.lines, next] };
+      });
+    };
+
+    window.loadProfileData({
+      mode: window.PROFILE_DATA_SOURCE || "github",
+      onStatus: pushProfileStatus,
+    })
       .then((data) => {
         if (!alive || !data) return;
         window.PROFILE_DATA = data;
         applyProfileData(data);
+        pushProfileStatus({ ok: true, s: "Reached target", m: "Profile Data Ready" });
+        setProfileLoad(prev => ({ ...prev, ready: true }));
         setDataVersion(v => v + 1);
       })
       .catch((err) => {
         console.warn("[app] profile data refresh failed:", err);
+        pushProfileStatus({ ok: false, s: "Failed", m: "profile data refresh" });
+        pushProfileStatus({ ok: true, s: "Mounted", m: "static profile fallback" });
+        setProfileLoad(prev => ({ ...prev, ready: true }));
       });
     return () => { alive = false; };
   }, []);
@@ -692,6 +723,7 @@ function App() {
           accent={accentC}
           mode={resolvedMode}
           sections={wrappedSections}
+          profileLoad={profileLoad}
           skipped={skipped}
           onComplete={handleStreamComplete}
         />

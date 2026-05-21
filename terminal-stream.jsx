@@ -24,6 +24,7 @@ const STREAM_COMMANDS = [
 const PHASE_PRE_BOOT  = "pre-boot";   // nothing shown yet
 const PHASE_BIOS      = "bios";       // streaming BIOS lines
 const PHASE_SYSTEMD   = "systemd";    // streaming systemd OK lines
+const PHASE_PROFILE   = "profile";    // cache/API hydration before login
 const PHASE_LOGIN     = "login";      // login + password typing
 const PHASE_MOTD      = "motd";       // motd appears
 const PHASE_COMMANDS  = "commands";   // shell commands + sections
@@ -83,17 +84,23 @@ function PromptLine({ accent, cmd, typing }) {
   );
 }
 
-function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode }) {
+function TerminalStream({ accent, sections, profileLoad, skipped, onSkip, onComplete, mode }) {
   // Granular progress trackers. When `skipped`, every list is fully populated.
   const [biosIdx,   setBiosIdx]   = tsUseState(0);
   const [sysIdx,    setSysIdx]    = tsUseState(0);
   const [phase,     setPhase]     = tsUseState(PHASE_PRE_BOOT);
   const [loginType, setLoginType] = tsUseState(false);
   const [pwdType,   setPwdType]   = tsUseState(false);
+  const [profileIdx, setProfileIdx] = tsUseState(0);
   const [showMotd,  setShowMotd]  = tsUseState(false);
   const [cmdIdx,    setCmdIdx]    = tsUseState(0);     // # of commands STARTED typing
   const [outputIdx, setOutputIdx] = tsUseState(0);     // # of outputs SHOWN
   const containerRef = tsUseRef(null);
+  const profileLoadRef = tsUseRef(profileLoad || { ready: true, lines: [] });
+
+  tsUseEffect(() => {
+    profileLoadRef.current = profileLoad || { ready: true, lines: [] };
+  }, [profileLoad]);
 
   // If the visit is being skipped (or replayed-as-skipped), jump straight to
   // the "already-booted" state: NO BIOS, NO systemd, NO login — just MOTD
@@ -105,6 +112,7 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
     setSysIdx(0);
     setLoginType(false);
     setPwdType(false);
+    setProfileIdx((profileLoadRef.current.lines || []).length);
     setShowMotd(true);
     setCmdIdx(STREAM_COMMANDS.length);
     setOutputIdx(STREAM_COMMANDS.length);
@@ -124,7 +132,7 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
     });
-  }, [biosIdx, sysIdx, loginType, pwdType, showMotd, cmdIdx, outputIdx, phase, skipped]);
+  }, [biosIdx, sysIdx, loginType, pwdType, profileIdx, showMotd, cmdIdx, outputIdx, phase, skipped]);
 
   // Drive the live animation.
   tsUseEffect(() => {
@@ -136,6 +144,7 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
     setSysIdx(0);
     setLoginType(false);
     setPwdType(false);
+    setProfileIdx(0);
     setShowMotd(false);
     setCmdIdx(0);
     setOutputIdx(0);
@@ -167,6 +176,24 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
         setSysIdx(i + 1);
       }
       await wait(380);
+
+      setPhase(PHASE_PROFILE);
+      let shownProfileLines = 0;
+      const profileStepMs = 240;
+      const profilePollMs = 140;
+      while (!cancel) {
+        const current = profileLoadRef.current || { ready: true, lines: [] };
+        const lines = current.lines || [];
+        if (shownProfileLines < lines.length) {
+          shownProfileLines += 1;
+          setProfileIdx(shownProfileLines);
+          await wait(profileStepMs);
+          continue;
+        }
+        if (current.ready) break;
+        await wait(profilePollMs);
+      }
+      await wait(360);
 
       setPhase(PHASE_LOGIN);
       await wait(220);
@@ -208,6 +235,7 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
   }, [skipped]);
 
   const bootCleared = phase === PHASE_MOTD || phase === PHASE_COMMANDS || phase === PHASE_DONE;
+  const profileLines = (profileLoad?.lines || []).slice(0, profileIdx);
 
   return (
     <div className="ts" ref={containerRef}>
@@ -219,6 +247,10 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
       {/* systemd phase — cleared after login */}
       {!bootCleared && SYSTEMD_LINES.slice(0, sysIdx).map((l, i) => (
         <SystemdLine key={"s" + i} line={l} accent={accent} />
+      ))}
+
+      {!bootCleared && profileLines.map((line, i) => (
+        <SystemdLine key={"p" + i} line={line} accent={accent} />
       ))}
 
       {/* login + password — only visible during the LOGIN phase itself */}

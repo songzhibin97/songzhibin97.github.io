@@ -17,36 +17,54 @@ window.loadProfileData = async function loadProfileData(opts = {}) {
   const handle = opts.handle || (window.PROFILE_DATA?.identity?.handle) || "songzhibin97";
   const cacheKey = `bin-profile.github.${handle}.v2`;
   const cacheTtlMs = 6 * 60 * 60 * 1000;
+  const report = (s, m, ok = true) => {
+    if (typeof opts.onStatus === "function") opts.onStatus({ ok, s, m });
+  };
+
+  report("Mounted", "static profile defaults");
 
   if (mode === "static") {
+    report("Reached target", "Static Profile Data");
     return window.PROFILE_DATA;
   }
 
   if (mode === "github") {
+    report("Checking", "local GitHub profile cache");
     const cached = readCache(cacheKey, cacheTtlMs);
-    if (cached) return mergeData(window.PROFILE_DATA, cached);
+    if (cached) {
+      report("Mounted", "fresh GitHub profile cache");
+      return mergeData(window.PROFILE_DATA, cached);
+    }
 
     try {
-      const live = await fetchGitHub(handle, opts.token || window.GITHUB_TOKEN, window.PROFILE_DATA);
+      report("Started", "GitHub public API fetch");
+      const live = await fetchGitHub(handle, opts.token || window.GITHUB_TOKEN, window.PROFILE_DATA, report);
       writeCache(cacheKey, live);
+      report("Wrote", "GitHub profile cache snapshot");
       // Overlay live data on top of static defaults so anything GitHub
       // can't give us (motto, signatures, tech ratings, etc.) survives.
       return mergeData(window.PROFILE_DATA, live);
     } catch (err) {
+      report("Failed", "GitHub public API fetch", false);
       const stale = readCache(cacheKey, Infinity);
-      if (stale) return mergeData(window.PROFILE_DATA, stale);
+      if (stale) {
+        report("Mounted", "stale GitHub profile cache");
+        return mergeData(window.PROFILE_DATA, stale);
+      }
       console.warn("[profile-source] GitHub fetch failed, falling back to static data:", err);
+      report("Mounted", "static profile fallback");
       return window.PROFILE_DATA;
     }
   }
 
   console.warn("[profile-source] unknown mode:", mode, "— using static");
+  report("Mounted", "static profile fallback");
   return window.PROFILE_DATA;
 };
 
 // ─────────────────────────────────────────────────────────────────────────
 
-async function fetchGitHub(handle, token, staticData = {}) {
+async function fetchGitHub(handle, token, staticData = {}, report = () => {}) {
   const headers = {
     Accept: "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
@@ -81,12 +99,14 @@ async function fetchGitHub(handle, token, staticData = {}) {
     return Array.isArray(data) ? data.length : 0;
   };
 
+  report("Resolving", `${handle} account index`);
   const [user, repos, orgs, starred] = await Promise.all([
     json(`/users/${handle}`),
     pages(`/users/${handle}/repos?per_page=100&sort=updated&type=owner`),
     pages(`/users/${handle}/orgs?per_page=100`, 3),
     pagedCount(`/users/${handle}/starred?per_page=1`).catch(() => staticData?.stats?.starred),
   ]);
+  report("Loaded", `${repos.length} repositories · ${orgs.length} orgs`);
 
   const reposByFullName = new Map(repos.map(r => [r.full_name.toLowerCase(), r]));
   const reposByName = new Map(repos.map(r => [r.name, r]));
@@ -98,6 +118,7 @@ async function fetchGitHub(handle, token, staticData = {}) {
         .sort((a, b) => b.stargazers_count - a.stargazers_count)
         .slice(0, 6)
         .map(r => projectFromRepo(r, handle));
+  report("Resolved", `${pinned.length} pinned project cards`);
 
   const ownRepos = (staticData?.ownRepos || []).length
     ? staticData.ownRepos.map(r => {
@@ -109,9 +130,12 @@ async function fetchGitHub(handle, token, staticData = {}) {
         .sort((a, b) => b.stargazers_count - a.stargazers_count)
         .slice(0, 6)
         .map(r => ({ name: r.name, desc: r.description || "" }));
+  report("Resolved", `${ownRepos.length} selected own repositories`);
 
   const events = await pages(`/users/${handle}/events/public?per_page=100`, 1).catch(() => []);
+  report("Loaded", `${events.length} public activity events`);
   const commits = await fetchEventCommits(events, json).catch(() => []);
+  report("Resolved", `${commits.length} recent commit rows`);
 
   return {
     identity: {
