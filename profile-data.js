@@ -24,6 +24,8 @@ window.PROFILE_DATA = {
     mottoEn:  "Never overestimate yourself.",
     homepage: "cnblogs.com/binHome",
     uid:      "49082129",
+    unixUid:  "1000",
+    ghUid:    "49082129",
     role:     "backend engineer · open-source maintainer",
     tags:     ["go", "microservices", "performance", "compilers"],
   },

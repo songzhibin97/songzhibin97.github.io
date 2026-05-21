@@ -156,6 +156,8 @@ html, body {
   background: transparent;
   color: var(--fg-2);
   border-right: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .sb-right .sb-cell { border-right: 0; border-left: 1px solid var(--border); }
 .sb-cell.dim { color: var(--dim); }
@@ -522,7 +524,8 @@ html, body {
 }
 .heatmap-months {
   display: grid;
-  grid-template-columns: repeat(26, 1fr);
+  grid-template-columns: repeat(26, 12px);
+  column-gap: 3px;
   padding-left: 34px;
   font-size: 10.5px;
   letter-spacing: 0.06em;
@@ -530,13 +533,16 @@ html, body {
 .heatmap-months > span { white-space: nowrap; }
 .heatmap { display: flex; gap: 6px; }
 .heatmap-days {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  row-gap: 3px;
   font-size: 10px;
-  padding: 8px 0;
   min-width: 28px;
+  line-height: 12px;
 }
+.heatmap-days > span:nth-child(1) { grid-row: 2; }
+.heatmap-days > span:nth-child(2) { grid-row: 4; }
+.heatmap-days > span:nth-child(3) { grid-row: 6; }
 .heatmap-grid { display: flex; gap: 3px; }
 .hm-col { display: flex; flex-direction: column; gap: 3px; }
 .hm-cell {
@@ -653,12 +659,23 @@ kbd {
 .bs-login { margin: 14px 0 8px 0; }
 
 .ts-motd {
+  position: relative;
   white-space: pre-wrap;
-  margin: 12px 0 18px 0;
+  margin: 12px 0 22px 0;
+  padding: 4px 0;
   font-size: 13px;
   color: var(--fg-2);
-  border-left: 2px solid var(--accent-dim);
-  padding: 6px 0 6px 16px;
+}
+.ts-motd::before {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: var(--accent-dim);
+  opacity: 0.65;
+  border-radius: 1px;
 }
 
 /* command block — each command + its rendered section */
@@ -851,3 +868,78 @@ kbd {
   .sb-left .sb-cell:nth-child(n+3),
   .sb-right .sb-cell:nth-child(-n+2) { display: none; }
 }
+
+/* ─── Interactive shell (live prompt) ──────────────────────────────── */
+.ish {
+  padding: 18px 0 96px;
+  margin-top: 24px;
+  border-top: 1px dashed var(--border-2);
+  font-size: 13px;
+  cursor: text;
+  min-height: 320px;
+}
+.ish-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  white-space: pre-wrap;
+  margin: 0;
+  line-height: 1.6;
+  font-family: inherit;
+}
+.ish-label {
+  flex: 0 0 auto;
+  font-weight: 500;
+  user-select: none;
+}
+.ish-cwd { color: #9ab; }
+.mode-paper .ish-cwd,
+.mode-light .ish-cwd { color: #486; }
+.ish-cmd {
+  color: var(--fg);
+  font-weight: 600;
+  flex: 1 1 auto;
+  word-break: break-all;
+}
+.ish-out {
+  margin: 0 0 4px 0;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--fg-2);
+  font: inherit;
+  line-height: 1.6;
+}
+.ish-node {
+  margin: 6px 0 18px 0;
+}
+.ish-input-row { padding-bottom: 4px; }
+.ish-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--fg);
+  padding: 0;
+  margin: 0;
+}
+.ish-bye {
+  margin-top: 14px;
+  font-size: 12px;
+}
+.ish-relogin {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0 2px;
+  margin: 0 4px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ish-exited .ish-input-row { display: none; }

@@ -13,9 +13,9 @@ const STREAM_COMMANDS = [
   { id: "01", cmd: "cat .signatures" },
   { id: "02", cmd: "stack --rated" },
   { id: "03", cmd: "gh repo list --pinned songzhibin97" },
-  { id: "04", cmd: "repos list --own" },
+  { id: "04", cmd: "gh repo list songzhibin97 --limit 6" },
   { id: "05", cmd: "contrib --weeks 26" },
-  { id: "06", cmd: "git log --author=bin --oneline -n 10" },
+  { id: "06", cmd: "git log --author=bin -n 10 --pretty=tabular" },
   { id: "07", cmd: "gh org list" },
   { id: "08", cmd: "cat .contact" },
 ];
@@ -39,31 +39,33 @@ function formatLastLogin(date) {
   return `${days[date.getDay()]} ${months[date.getMonth()]} ${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())} ${date.getFullYear()} from 172.16.0.42`;
 }
 function buildMotdLines() {
-  let stamp;
+  let priorVisit = null;
   try {
     const raw = localStorage.getItem(LAST_VISIT_KEY);
-    stamp = raw ? formatLastLogin(new Date(raw))
-                : formatLastLogin(new Date(Date.now() - 36 * 3600 * 1000));
-  } catch (e) {
-    stamp = formatLastLogin(new Date(Date.now() - 36 * 3600 * 1000));
-  }
+    if (raw) priorVisit = new Date(raw);
+  } catch (e) {}
+
   // Pull env / identity values from profile-data.js so editing the data
   // file updates the welcome banner without touching this file.
   const id  = (window.PROFILE_DATA && window.PROFILE_DATA.identity) || {};
   const env = (window.PROFILE_DATA && window.PROFILE_DATA.shellEnv) || {};
   const rule = "─".repeat(45);
-  return [
-    "",
-    `  Welcome back to ${env.distro || "Arch Linux"} ${rule}`,
-    `    kernel  ${env.kernel || "6.6.10"}   shell  ${env.shell || "zsh"}   tmux  ${env.tmux || "3.4"}`,
-    `    uid     ${id.uid || "0"}         user   ${env.unixUser || id.handle || "bin"}`,
-    `    locale  zh_CN.UTF-8 · en_US.UTF-8`,
-    "  " + "─".repeat(60),
-    "  Last login: " + stamp,
-    "",
-    '  Tip: scroll for the full session, or use the panel for tweaks.',
-    "",
+  const greeting = priorVisit ? "Welcome back to" : "Welcome to";
+  const unixUid = id.unixUid || "1000";
+  const ghUid = id.ghUid || id.uid || "49082129";
+  const user = env.unixUser || id.handle || "bin";
+  const lines = [
+    `${greeting} ${env.distro || "Arch Linux"} ${rule}`,
+    `  kernel  ${env.kernel || "6.6.10"}   shell  ${env.shell || "zsh"}   tmux  ${env.tmux || "3.4"}`,
+    `  uid     ${unixUid}   gh_id  ${ghUid}   user   ${user}`,
+    `  locale  zh_CN.UTF-8 · en_US.UTF-8`,
+    "─".repeat(60),
   ];
+  if (priorVisit) {
+    lines.push("Last login: " + formatLastLogin(priorVisit));
+  }
+  lines.push("", "Tip: scroll for the full session, or use the panel for tweaks.");
+  return lines;
 }
 
 function PromptLine({ accent, cmd, typing }) {
@@ -205,20 +207,22 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
     };
   }, [skipped]);
 
+  const bootCleared = phase === PHASE_MOTD || phase === PHASE_COMMANDS || phase === PHASE_DONE;
+
   return (
     <div className="ts" ref={containerRef}>
-      {/* BIOS phase */}
-      {BIOS_LINES.slice(0, biosIdx).map((l, i) => (
+      {/* BIOS phase — cleared after login */}
+      {!bootCleared && BIOS_LINES.slice(0, biosIdx).map((l, i) => (
         <BiosLine key={"b" + i} line={l} accent={accent} />
       ))}
 
-      {/* systemd phase */}
-      {SYSTEMD_LINES.slice(0, sysIdx).map((l, i) => (
+      {/* systemd phase — cleared after login */}
+      {!bootCleared && SYSTEMD_LINES.slice(0, sysIdx).map((l, i) => (
         <SystemdLine key={"s" + i} line={l} accent={accent} />
       ))}
 
-      {/* login + password (only during the live boot — never on subsequent visits) */}
-      {!skipped && (phase === PHASE_LOGIN || phase === PHASE_MOTD || phase === PHASE_COMMANDS || phase === PHASE_DONE) && (
+      {/* login + password — only visible during the LOGIN phase itself */}
+      {!skipped && phase === PHASE_LOGIN && (
         <LoginBlock loginTyping={loginType} passwordTyping={pwdType} accent={accent} />
       )}
 
@@ -244,14 +248,8 @@ function TerminalStream({ accent, sections, skipped, onSkip, onComplete, mode })
       })}
 
       {/* Final live prompt (only after everything has run) */}
-      {phase === PHASE_DONE && (
-        <div className="ts-final-prompt">
-          <span style={{ color: accent }}>bin@arch</span>
-          <span className="dim">:</span>
-          <span style={{ color: "#9ab" }}>~</span>
-          <span className="dim">$ </span>
-          <Cursor accent={accent} />
-        </div>
+      {phase === PHASE_DONE && window.InteractiveShell && (
+        <InteractiveShell accent={accent} sections={sections} />
       )}
     </div>
   );

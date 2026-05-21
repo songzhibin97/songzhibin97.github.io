@@ -15,7 +15,7 @@ const BIOS_LINES = [
   { d: 80,  t: "BIOS",   m: "POST passed · UEFI mode · secure boot off"        },
   { d: 60,  t: "MEM",    m: "memtest86 ok · 32768 MiB DDR5 @ 6000 MT/s"        },
   { d: 80,  t: "CPU",    m: "Intel(R) Core(TM) i9-13900K @ 5.40GHz × 32"       },
-  { d: 60,  t: "DISK",   m: "nvme0n1 · Samsung 990 Pro 2TB · 124°C cooled ok"  },
+  { d: 60,  t: "DISK",   m: "nvme0n1 · Samsung 990 Pro 2TB · 42°C ok"          },
   { d: 100, t: "GRUB",   m: "loading vmlinuz-linux 6.6.10-arch1-1 ... ok"     },
 ];
 
@@ -30,18 +30,7 @@ const SYSTEMD_LINES = [
   { d: 80, ok: true,  s: "Started",            m: "songzhibin97-profile.service"   },
 ];
 
-const MOTD_LINES = [
-  "",
-  "  Welcome to Arch Linux ──────────────────────────────────────",
-  "    kernel  6.6.10-arch1-1   shell  zsh 5.9   tmux  3.4",
-  "    uid     49082129         user   bin",
-  "    locale  zh_CN.UTF-8 · en_US.UTF-8",
-  "  ────────────────────────────────────────────────────────────",
-  "  Last login: Mon May 19 14:31:09 2026 from 172.16.0.42",
-  "",
-  '  Tip: type "help" to see what this profile can show you.',
-  "",
-];
+// MOTD content is built dynamically per visit in terminal-stream.jsx.
 
 function useTypewriter(text, speed = 18, run = true) {
   // When `run` is false (e.g. subsequent visits, skipped mode), short-circuit
@@ -87,7 +76,6 @@ function SystemdLine({ line, accent }) {
 window.BootStages = BootStages;
 window.BIOS_LINES = BIOS_LINES;
 window.SYSTEMD_LINES = SYSTEMD_LINES;
-window.MOTD_LINES = MOTD_LINES;
 window.useTypewriter = useTypewriter;
 window.BiosLine = BiosLine;
 window.SystemdLine = SystemdLine;

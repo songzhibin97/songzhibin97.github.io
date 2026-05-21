@@ -153,9 +153,10 @@ function StatusBar({ accent, name, mode, autoBadge }) {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
-  const hh = String(time.getUTCHours()).padStart(2,"0");
-  const mm = String(time.getUTCMinutes()).padStart(2,"0");
-  const ss = String(time.getUTCSeconds()).padStart(2,"0");
+  const xiAn = new Date(time.getTime() + (8 * 60 + time.getTimezoneOffset()) * 60_000);
+  const hh = String(xiAn.getHours()).padStart(2,"0");
+  const mm = String(xiAn.getMinutes()).padStart(2,"0");
+  const ss = String(xiAn.getSeconds()).padStart(2,"0");
   const fgOnAccent = (mode === "light" || mode === "paper") ? "#fbf7ea" : "#0a0b0d";
   return (
     <div className="statusbar">
@@ -167,7 +168,7 @@ function StatusBar({ accent, name, mode, autoBadge }) {
       <div className="sb-right">
         <span className="sb-cell dim">{SHELL_ENV?.goVer || "go1.22.4"}</span>
         <span className="sb-cell dim">{SHELL_ENV?.timezone || "XI'AN · UTC+8"}</span>
-        <span className="sb-cell dim">{hh}:{mm}:{ss} UTC</span>
+        <span className="sb-cell dim">{`${hh}:${mm}:${ss} CST`}</span>
         <span className="sb-cell" style={{ background: accent, color: fgOnAccent }}>
           {autoBadge || (mode + "·" + name)}
         </span>
@@ -629,9 +630,12 @@ function App() {
 
   useEffect(() => {
     if (streamDone) {
-      // After the session is complete, listen for R to replay.
       const onKey = (e) => {
-        if (e.key === "r" || e.key === "R") setTweak("replayBoot", true);
+        if (e.key !== "r" && e.key !== "R") return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const target = e.target;
+        if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
+        setTweak("replayBoot", true);
       };
       window.addEventListener("keydown", onKey);
       return () => window.removeEventListener("keydown", onKey);

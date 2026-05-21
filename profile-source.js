@@ -16,13 +16,14 @@ window.loadProfileData = async function loadProfileData(opts = {}) {
   const mode   = opts.mode   || window.PROFILE_DATA_SOURCE || "static";
   const handle = opts.handle || (window.PROFILE_DATA?.identity?.handle) || "songzhibin97";
   const cacheKey = `bin-profile.github.${handle}.v2`;
+  const cacheTtlMs = 6 * 60 * 60 * 1000;
 
   if (mode === "static") {
     return window.PROFILE_DATA;
   }
 
   if (mode === "github") {
-    const cached = readCache(cacheKey, 15 * 60 * 1000);
+    const cached = readCache(cacheKey, cacheTtlMs);
     if (cached) return mergeData(window.PROFILE_DATA, cached);
 
     try {
